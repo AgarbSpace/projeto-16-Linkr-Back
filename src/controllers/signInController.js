@@ -13,7 +13,7 @@ export async function signIn(req, res) {
 
     if (bcrypt.compareSync(password, user.rows[0].passwordHash)) {
       const token = uuid();
-      const data = { token: token, userId: user.rows[0].id };
+      const data = { token: token, userId: user.rows[0].id, userPicture: user.rows[0].picture };
       await signInRepository.insertToken(token, user.rows[0].id);
       res.send(data);
     }

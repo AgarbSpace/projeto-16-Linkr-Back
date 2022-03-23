@@ -25,7 +25,7 @@ async function returnHashtagIdArray(array) {
         VALUES ($1)`, [array[i]])
     }
     else {
-      hashtagIdArray.push(hashtagId.rows[0].id)
+      hashtagIdArray.push(parseInt(hashtagId.rows[0].id))
       i++
     }
   }
@@ -51,15 +51,17 @@ function createHashtagPostQuery(array) {
 `
   let queryArray = []
   for (let i = 0; i < array.length; i++) {
-    queryArray.push(`($1, $${1 + parseInt(array[i])})`)
+    queryArray.push(`($1, $${2 + parseInt(i)})`)
   }
-  queryPost += `${queryArray.join(
-    `,
-  `)};`
+  queryPost += `${queryArray.join(`,`)};`
   return queryPost
 }
 
 async function insertIntoHashtagPost(hashtagIdArray, postId) {
+  console.log("cheguei")
+  console.log(...hashtagIdArray)
+  console.log(createHashtagPostQuery(hashtagIdArray))
+  console.log(postId)
   await connection.query(createHashtagPostQuery(hashtagIdArray), [postId, ...hashtagIdArray])
 }
 
