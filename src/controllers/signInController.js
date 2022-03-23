@@ -6,16 +6,16 @@ export async function signIn(req, res) {
   const { email, password } = req.body;
   try {
     const user = await signInRepository.findUser(email);
-    // console.log(user.rows[0].email)
+
     if (!user.rows[0]) {
-        console.log("asasdasdadsa")
       res.sendStatus(401);
     }
     
     if (bcrypt.compareSync(password, user.rows[0].passwordHash)){
         const token = uuid();
+        const data = {token: token, userId: user.rows[0].id}
         await signInRepository.insertToken(token, user.rows[0].id)
-        res.send(token)
+        res.send(data)
     }
   } catch (error) {
     console.log(error);
