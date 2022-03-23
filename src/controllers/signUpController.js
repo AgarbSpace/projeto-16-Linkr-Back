@@ -4,7 +4,6 @@ import { signUpRepository } from '../repositories/signUpRepository.js';
 export async function signUp(request, response) {
 
   const user = request.body;
-  console.log(user)
   try {
     const existingUsers = await signUpRepository.findUser(user.email);
     if (existingUsers.rowCount > 0) {
