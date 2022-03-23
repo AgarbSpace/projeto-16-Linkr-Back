@@ -1,4 +1,4 @@
-import { connection } from "../database.js"
+import connection from "../database.js"
 
 async function findUser(email){
     return connection.query('SELECT * FROM users WHERE email=$1', [user.email])
