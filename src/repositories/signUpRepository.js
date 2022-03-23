@@ -6,10 +6,11 @@ async function findUser(email) {
 
 async function insertUser(email, passwordHash, username, url) {
   return connection.query(`
+
     INSERT INTO 
       users(email, "passwordHash", name, picture) 
     VALUES ($1, $2, $3, $4)
-  `, [email, passwordHash, username, url])
+  `, [email, passwordHash, name, url])
 }
 
 export const signUpRepository = {
