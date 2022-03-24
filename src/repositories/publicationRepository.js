@@ -2,11 +2,14 @@ import connection from "../database.js"
 
 async function postPublication(text, url, userId) {
 
-  await connection.query(`
+  const postId = await connection.query(`
     INSERT INTO 
     posts (text, link, "userId") 
-    VALUES ($1, $2, $3)`, [text, url, parseInt(userId)])
+    VALUES ($1, $2, $3)
+    RETURNING id
+    `, [text, url, parseInt(userId)])
 
+  return postId.rows[0].id
 }
 
 async function returnHashtagIdArray(array) {
@@ -58,10 +61,6 @@ function createHashtagPostQuery(array) {
 }
 
 async function insertIntoHashtagPost(hashtagIdArray, postId) {
-  console.log("cheguei")
-  console.log(...hashtagIdArray)
-  console.log(createHashtagPostQuery(hashtagIdArray))
-  console.log(postId)
   await connection.query(createHashtagPostQuery(hashtagIdArray), [postId, ...hashtagIdArray])
 }
 

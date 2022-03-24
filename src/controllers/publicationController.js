@@ -29,15 +29,13 @@ export async function postPublication(req, res) {
 
   try {
 
-    await publicationRepository.postPublication(text, link, userId)
+    const postId = await publicationRepository.postPublication(text, link, userId)
 
     if (hashtagList.length === 0) {
       return res.sendStatus(201);
     }
 
     const hashtagIdArray = await publicationRepository.returnHashtagIdArray(hashtagList)
-
-    const postId = await publicationRepository.getPublicationId(link, userId)
 
     await publicationRepository.insertIntoHashtagPost(hashtagIdArray, postId)
 
