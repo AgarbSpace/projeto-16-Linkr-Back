@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devStart" : "nodemon ./src/app.js"
+    "devStart": "nodemon ./src/app.js"
   },
   "repository": {
     "type": "git",
@@ -28,5 +28,8 @@
     "joi": "^17.6.0",
     "pg": "^8.7.3",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
