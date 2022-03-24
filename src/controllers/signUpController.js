@@ -12,7 +12,7 @@ export async function signUp(request, response) {
 
     const passwordHash = bcrypt.hashSync(user.password, 10);
 
-    await signUpRepository.insertUser(user.email, passwordHash, user.username, user.url);
+    await signUpRepository.insertUser(user.email, passwordHash, user.name, user.url);
 
     response.sendStatus(201);
   } catch (error) {

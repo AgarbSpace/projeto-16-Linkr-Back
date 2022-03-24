@@ -4,7 +4,7 @@ async function findUser(email) {
   return connection.query('SELECT * FROM users WHERE email=$1', [email])
 }
 
-async function insertUser(email, passwordHash, username, url) {
+async function insertUser(email, passwordHash, name, url) {
   return connection.query(`
 
     INSERT INTO 
