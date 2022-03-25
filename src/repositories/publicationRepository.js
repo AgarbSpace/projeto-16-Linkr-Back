@@ -64,9 +64,33 @@ async function insertIntoHashtagPost(hashtagIdArray, postId) {
   await connection.query(createHashtagPostQuery(hashtagIdArray), [postId, ...hashtagIdArray])
 }
 
+async function verifyHashtags () {
+  const hashtags = await connection.query(`SELECT * FROM hashtags`);
+  for (let i = 0; i < hashtags.rowCount; i++) {
+    const verifyCitation = await connection.query(`
+      SELECT * FROM "hashtagPost" WHERE "hashtagId" = $1
+    `, [hashtags.rows[i]].id);
+
+    if (!verifyCitation) {
+      await connection.query(`
+        DELETE FROM hashtags WHERE id = $1
+      `, [hashtags.rows[i].id]);
+    }
+  }
+}
+
+async function deletePublication(postId) {
+  await connection.query(`DELETE FROM "hashtagPost" WHERE "postId" = $1`, [postId]);
+  verifyHashtags();
+  await connection.query(`DELETE FROM "likes" WHERE "postId" = $1`, [postId]);
+  await connection.query(`DELETE FROM posts WHERE id = $1`, [postId]);
+}
+
 export const publicationRepository = {
   postPublication,
   returnHashtagIdArray,
   getPublicationId,
   insertIntoHashtagPost,
+  verifyHashtags,
+  deletePublication,
 }
