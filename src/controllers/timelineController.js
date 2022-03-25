@@ -19,7 +19,6 @@ export async function getTimeline(request, response){
                 username: postsArray.userName
             })
         }
-        
         response.send(post.reverse().slice(0,20));
     } catch (error) {
         console.log(error)

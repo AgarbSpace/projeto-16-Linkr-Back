@@ -17,10 +17,11 @@ async function getHashtagRanking(limit) {
 async function getHashtag(nameHashtag) {
 
   const hashtagFilter = await connection.query(`
-  SELECT * FROM hashtags 
+  SELECT hashtags.name as nameHashtag, posts.*, users.* FROM hashtags 
   JOIN "hashtagPost" ON hashtags.id="hashtagPost"."hashtagId"
   JOIN posts ON posts.id="hashtagPost"."postId"
-  WHERE name=$1
+  JOIN users ON users.id=posts."userId"
+  WHERE hashtags.name=$1
     `, [nameHashtag])
 
   return hashtagFilter.rows
