@@ -48,5 +48,15 @@ export async function postPublication(req, res) {
     return res.sendStatus(500);
   }
 
+}
 
+export async function deletePublication (req, res) {
+  try {
+    await publicationRepository.deletePublication(req.params.id);
+    
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
 }

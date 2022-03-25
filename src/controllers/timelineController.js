@@ -2,7 +2,6 @@ import urlMetadata from "url-metadata";
 import { timelineRepository } from "../repositories/timelineRepository.js";
 
 export async function getTimeline(request, response) {
-
   try {
     const posts = await timelineRepository.getPosts();
     const post = []
@@ -10,6 +9,7 @@ export async function getTimeline(request, response) {
       try {
         const link = await urlMetadata(postsArray.link);
         post.push({
+          id: postsArray.id,
           userId: postsArray.userId,
           image: link.image,
           description: link.description,
@@ -22,6 +22,7 @@ export async function getTimeline(request, response) {
       }
       catch {
         post.push({
+          id: postsArray.id,
           userId: postsArray.userId,
           image: "https://hugocalixto.com.br/wp-content/uploads/sites/22/2020/07/error-404-1.png",
           description: "erro ao recuperar informações",
