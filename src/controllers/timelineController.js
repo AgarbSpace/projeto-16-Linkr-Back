@@ -10,6 +10,7 @@ export async function getTimeline(request, response){
             const link = await urlMetadata(postsArray.link);
             post.push({
                 userId: postsArray.userId,
+                postId: postsArray.id,
                 image: link.image,
                 description: link.description,
                 title: link.title,
