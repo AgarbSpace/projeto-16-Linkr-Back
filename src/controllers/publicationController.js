@@ -60,3 +60,27 @@ export async function deletePublication (req, res) {
     return res.sendStatus(500);
   }
 }
+
+export async function updatePublication (req, res) {
+  try {
+    const { text } = req.body;
+
+    const postId = req.params.id;
+
+    const previousText = await publicationRepository.getPublicationById(postId);
+
+    const hashtagNowList = getHashTagFromText(text);
+
+    const hashtagPreviousList = getHashTagFromText(previousText.text);
+
+    await publicationRepository.updatePublication(text, postId);
+
+    await publicationRepository.updateHashtags(hashtagNowList, hashtagPreviousList, postId);
+
+    return res.sendStatus(201)
+    
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
