@@ -9,6 +9,7 @@ export async function hashtagFilter(req, res) {
     for (const [idx, postsArray] of hashtagFilter.entries()) {
       const link = await urlMetadata(postsArray.link);
       post.push({
+        id: hashtagFilter[idx].postId,
         userId: hashtagFilter[idx].userId,
         image: link.image,
         description: link.description,
