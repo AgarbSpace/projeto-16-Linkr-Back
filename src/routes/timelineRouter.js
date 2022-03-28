@@ -4,7 +4,7 @@ import { validateTokenMiddleware } from "../middlewares/validateTokenMiddleware.
 
 const timelineRouter = Router();
 
-timelineRouter.get("/timeline", getTimeline);
-timelineRouter.get('/user/:id', getTimelineByUserId);
+timelineRouter.get("/timeline", validateTokenMiddleware, getTimeline);
+timelineRouter.get('/user/:id', validateTokenMiddleware, getTimelineByUserId);
 
 export default timelineRouter;

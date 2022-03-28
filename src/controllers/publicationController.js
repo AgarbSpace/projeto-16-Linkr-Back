@@ -49,10 +49,19 @@ export async function postPublication(req, res) {
 
 }
 
-export async function deletePublication (req, res) {
+export async function deletePublication(req, res) {
   try {
+
+    const post = await publicationRepository.getPublicationById(req.params.id)
+
+    const user = res.locals.user
+
+    if (post.userId !== user.id) {
+      return sendStatus(401)
+    }
+
     await publicationRepository.deletePublication(req.params.id);
-    
+
     return res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -60,13 +69,19 @@ export async function deletePublication (req, res) {
   }
 }
 
-export async function updatePublication (req, res) {
+export async function updatePublication(req, res) {
   try {
     const { text } = req.body;
 
     const postId = req.params.id;
 
     const previousText = await publicationRepository.getPublicationById(postId);
+
+    const user = res.locals.user
+
+    if (previousText.userId !== user.id) {
+      return res.sendStatus(401)
+    }
 
     const hashtagNowList = getHashTagFromText(text);
 
@@ -77,7 +92,7 @@ export async function updatePublication (req, res) {
     await publicationRepository.updateHashtags(hashtagNowList, hashtagPreviousList, postId);
 
     return res.sendStatus(201)
-    
+
   } catch (err) {
     console.log(err);
     res.sendStatus(500);

@@ -13,19 +13,37 @@ export async function getLikesQuery(postId) {
   return result.rows
 }
 
-export async function giveLikesQuery(userId,postId) {
-/* 
-  const verification = getLikesQuery(postId)
-  console.log(verification)
-  const result = await connection.query(`
-    INSERT INTO 
-      likes l
-    ("userId","postId")
-    VALUES
-    ($1, $2)
-  `,[userId, postId])
+export async function postExistQuery(postId){
+  return connection.query(`
+      SELECT * FROM posts
+      WHERE id = $1
+    `, [postId]);
+}
 
-  const teste = result.rows
-  return teste
-   */
+export async function giveOrRemoveLikesQuery(userId,postId) {
+  try {
+    
+    const liked = await connection.query(`
+      SELECT * FROM likes
+      WHERE "userId" = $1 AND "postId" = $2
+    `, [userId, postId]);
+
+    if(liked.rows.length > 0){
+      await connection.query(`
+        DELETE FROM likes
+        WHERE "userId"=$1 AND "postId"=$2
+      `,[userId, postId]);
+      return;
+    }
+
+    await connection.query(`
+        INSERT INTO 
+        likes ("userId","postId")
+        VALUES
+        ($1, $2)
+        `,[userId, postId]);
+
+  } catch (error) {
+    console.log(error);
+  }
 }

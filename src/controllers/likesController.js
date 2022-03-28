@@ -1,4 +1,4 @@
-import { getLikesQuery, giveLikesQuery } from "../repositories/likesRepository.js"
+import { getLikesQuery, giveOrRemoveLikesQuery, postExistQuery } from "../repositories/likesRepository.js"
 
 export async function getLikes(req,res) {
   const { postId } = req.params 
@@ -11,16 +11,21 @@ export async function getLikes(req,res) {
   }
 }
 
-export async function giveLikes(req,res) {
-/* 
-  const { user } = res.locals
-  const { postId } = req.body 
+export async function giveOrRemoveLikes(request,response) {
   try {
-    const result = giveLikesQuery(user.id,postId)
-    res.status(200).send(result)
+    const { user } = response.locals
+    const { postId } = request.params
+
+    const postExist = await postExistQuery(postId);
+    if(postExist.rows.length === 0){
+      return response.sendStatus(404)
+    }
+
+    const result = await giveOrRemoveLikesQuery(user.id,postId);
+    response.status(200).send(result)
   } catch (error) {
     console.log(error)
-    res.sendStatus(500)
+    response.sendStatus(500)
   }
-   */
+  
 } 
