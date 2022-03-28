@@ -24,7 +24,6 @@ function getHashTagFromText(tagString) {
 export async function postPublication(req, res) {
 
   const { text, link, userId } = req.body
-  console.log(userId)
   const hashtagList = getHashTagFromText(text)
 
   try {
