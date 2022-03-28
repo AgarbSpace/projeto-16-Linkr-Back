@@ -8,6 +8,7 @@ export async function signIn(req, res) {
     const user = await signInRepository.findUser(email);
 
     if (!user.rows[0]) {
+
       res.sendStatus(401);
     }
 
