@@ -5,7 +5,6 @@ export async function hashtagFilter(req, res) {
   const nameHashtag = req.headers.namehashtag;
   try {
     const hashtagFilter = await hashtagRepository.getHashtag(nameHashtag);
-    console.log("teste")
     const post = [];
     for (const [idx, postsArray] of hashtagFilter.entries()) {
       const link = await urlMetadata(postsArray.link);
