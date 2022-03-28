@@ -17,7 +17,7 @@ export async function getTimeline(request, response) {
           image: link.image,
           description: link.description,
           title: link.title,
-          source: link.source,
+          source: postsArray.link,
           text: postsArray.text,
           picture: postsArray.picture,
           username: postsArray.userName
@@ -63,7 +63,7 @@ export async function getTimelineByUserId(req, res) {
           image: link.image,
           description: link.description,
           title: link.title,
-          source: link.source,
+          source: postsArray.link,
           text: postsArray.text,
           picture: postsArray.picture,
           username: postsArray.userName
