@@ -1,6 +1,7 @@
 import connection from "../database.js";
 
 async function getPosts(offset){
+  
     let offsetQuery = "";
 
     if(offset && typeof(parseInt(offset)) === 'number'){
