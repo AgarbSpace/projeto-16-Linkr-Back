@@ -6,7 +6,7 @@ import { hashtagFilter } from "../controllers/hashtagFilterController.js";
 const hashtagRouter = Router();
 
 hashtagRouter.get('/hashtagranking', validateTokenMiddleware, hashtagRanking);
-hashtagRouter.get('/hashtag', hashtagFilter);
+hashtagRouter.get('/hashtag', validateTokenMiddleware, hashtagFilter);
 
 
 export default hashtagRouter;
