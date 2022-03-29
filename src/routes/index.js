@@ -7,6 +7,7 @@ import headerRouter from "./headerRouter.js";
 import userRouter from "./userRouter.js";
 import timelineRouter from "./timelineRouter.js";
 import likesRouter from "./likesRouter.js";
+import notificationRouter from "./notificationRouter.js";
 
 const router = Router();
 router.use(signUpRouter);
@@ -18,5 +19,6 @@ router.use(hashtagRouter)
 router.use(headerRouter)
 router.use(userRouter)
 router.use(likesRouter)
+router.use(notificationRouter)
 
 export default router;
