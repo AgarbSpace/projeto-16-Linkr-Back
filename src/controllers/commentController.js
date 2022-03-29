@@ -1,12 +1,14 @@
-import { commentRepository } from "../repositories/commentRepository"
+import { commentRepository } from "../repositories/commentRepository.js"
 
-export async function commentaryList(req, res) {
+export async function commentsList(req, res) {
 
   const userId = res.locals.user
 
+  const postId = req.params.id;
+
   try {
 
-    const commentsList = await commentRepository.getComments(userId.id)
+    const commentsList = await commentRepository.getComments(userId.id, postId)
 
     res.send(commentsList)
 
