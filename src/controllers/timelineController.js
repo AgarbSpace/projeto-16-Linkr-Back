@@ -4,11 +4,11 @@ import { timelineRepository } from "../repositories/timelineRepository.js";
 export async function getTimeline(request, response) {
 
   try {
-    const posts = await timelineRepository.getPosts();
+    const offset = request.query.offset;
+    const posts = await timelineRepository.getPosts(offset);
     const post = []
     for (const [idx, postsArray] of posts.rows.entries()) {
       try {
-
 
         const link = await urlMetadata(postsArray.link);
         post.push({
@@ -37,7 +37,7 @@ export async function getTimeline(request, response) {
       }
     }
 
-    response.send(post.reverse().slice(0, 20));
+    response.send(post);
   } catch (error) {
     console.log(error)
     response.sendStatus(500);
