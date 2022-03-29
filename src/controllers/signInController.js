@@ -20,6 +20,6 @@ export async function signIn(req, res) {
     }
   } catch (error) {
     console.log(error);
-    return response.sendStatus(500);
+    return res.sendStatus(500);
   }
 }
