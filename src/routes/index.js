@@ -10,6 +10,7 @@ import likesRouter from "./likesRouter.js";
 import notificationRouter from "./notificationRouter.js";
 import followRouter from "./followRouter.js";
 import commentRouter from "./commentRouter.js";
+import rePostRouter from "./re-postRouter.js";
 
 const router = Router();
 router.use(signUpRouter);
@@ -24,5 +25,6 @@ router.use(likesRouter);
 router.use(notificationRouter);
 router.use(followRouter);
 router.use(commentRouter);
+router.use(rePostRouter);
 
 export default router;
