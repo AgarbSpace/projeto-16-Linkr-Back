@@ -1,6 +1,6 @@
 import connection from "../database.js";
 
-async function getPosts(offset, userId){
+async function getPosts(offset){
   
     let offsetQuery = "";
 
@@ -18,30 +18,10 @@ async function getPosts(offset, userId){
 
       FROM posts
       JOIN users ON users.id = posts."userId"
-      WHERE posts."userId"<>$1
+
       ORDER BY date DESC
       LIMIT 10 ${offsetQuery}
-      `,[userId]);
-
-
-/*     const result =  await connection.query(`
-    SELECT 
-      posts.*, 
-      posts.id AS "id", 
-      owners.id AS "userId", 
-      owners.name AS "userName",
-      owners.picture AS picture
-
-
-    FROM posts
-    
-    JOIN users owners ON owners.id = posts."userId"
-    FULL OUTER JOIN reposts ON reposts."postId" = posts.id
-
-    WHERE posts."userId"=$1
-    ORDER BY date DESC
-    LIMIT 10 ${offsetQuery}
-    `,[userId]); */
+      `);
 
     return result.rows
 }
@@ -61,7 +41,7 @@ async function getPostsByUserId (userId) {
 
    return {username: userInfo.rows[0].name, userPosts: posts.rows};
 }
-async function getRePosts(userId) {
+async function getRePosts() {
   const reposts = await connection.query(`
   SELECT 
     posts.id AS id,
@@ -81,9 +61,7 @@ async function getRePosts(userId) {
     ON reposter.id = reposts."userId"
   JOIN users owners 
     ON owners.id = posts."userId"
-
-  WHERE reposts."userId"<>$1
-  `,[userId])
+  `)
   return reposts.rows
 }
 export const timelineRepository = {
