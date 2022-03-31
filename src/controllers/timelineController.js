@@ -3,18 +3,17 @@ import { timelineRepository } from "../repositories/timelineRepository.js";
 import { verifyFollowByIdsQuery, verifyIfUserFollowsAnyone } from "../repositories/followReposirtory.js";
 
 export async function getTimeline(request, response) {
-
+  const userId = response.locals.user.id
   try {
     const offset = request.query.offset;
-    const posts = await timelineRepository.getPosts(offset,response.locals.user.id);
+    const posts = await timelineRepository.getPosts(offset);
 
-    const reposts = await timelineRepository.getRePosts(response.locals.user.id);
+    const reposts = await timelineRepository.getRePosts();
     const timeline = posts.concat(reposts)
     const timelineInOrder = timeline.sort((a,b)=> b.date - a.date)
-
+    
     const post = []
     for (const [idx, postsArray] of timelineInOrder.entries()) {
-      // console.log("postsArray",postsArray)
       try {
         const link = await urlMetadata(postsArray.link);
         post.push({
@@ -50,8 +49,12 @@ export async function getTimeline(request, response) {
     }
     const finalPosts = [];
     for (let i = 0; i < post.length; i++) {
-      const verifyFollow = await verifyFollowByIdsQuery(post[i].userId, response.locals.user.id);
-      if (verifyFollow.length !== 0 || (response.locals.user.id === post[i].userId)) finalPosts.push(post[i]);
+      const verifyFollow = await verifyFollowByIdsQuery(post[i].userId, userId);
+      const verifyFollowRepost = await verifyFollowByIdsQuery(post[i].reposterId, userId);
+      if (((userId === post[i].userId))  || 
+          (verifyFollow.length !== 0 && verifyFollow.userId === userId) ||
+          (verifyFollowRepost.length !== 0 && verifyFollowRepost.userId === userId)) {
+        finalPosts.push(post[i])};
     }
 
     response.send(finalPosts);
