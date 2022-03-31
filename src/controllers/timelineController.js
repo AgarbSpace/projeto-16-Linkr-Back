@@ -6,15 +6,23 @@ export async function getTimeline(request, response) {
 
   try {
     const offset = request.query.offset;
-    const posts = await timelineRepository.getPosts(offset);
-    const post = []
-    for (const [idx, postsArray] of posts.rows.entries()) {
-      try {
+    const posts = await timelineRepository.getPosts(offset,response.locals.user.id);
 
+    const reposts = await timelineRepository.getRePosts(response.locals.user.id);
+    const timeline = posts.concat(reposts)
+    const timelineInOrder = timeline.sort((a,b)=> b.date - a.date)
+
+    const post = []
+    for (const [idx, postsArray] of timelineInOrder.entries()) {
+      // console.log("postsArray",postsArray)
+      try {
         const link = await urlMetadata(postsArray.link);
         post.push({
           id: postsArray.id,
           userId: postsArray.userId,
+          reposterId: postsArray.reposterId,
+          reposterName: postsArray.reposterName,
+          date: postsArray.date,
           image: link.image,
           description: link.description,
           title: link.title,
@@ -27,6 +35,9 @@ export async function getTimeline(request, response) {
         post.push({
           id: postsArray.id,
           userId: postsArray.userId,
+          reposterId: postsArray.reposterId,
+          reposterName: postsArray.reposterName,
+          date: postsArray.date,
           image: "https://geekblog.com.br/wp-content/uploads/2021/03/o-que-e-erro-404.png",
           description: "Erro ao tentar carregar meta-dados",
           title: "Erro ao tentar carregar meta-dados",
