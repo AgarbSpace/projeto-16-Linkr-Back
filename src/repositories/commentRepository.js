@@ -5,7 +5,7 @@ async function getComments(userId, postId) {
   const comments = await connection.query(`
   SELECT c.*, f."followerId" as "followingId", u.name, u.picture  FROM comments c
   JOIN users u ON u.id=c."userId" 
-  LEFT JOIN followers f ON f."userId"=$1
+  LEFT JOIN followers f ON f."userId"=$1 AND c."userId"=f."followerId"
   WHERE c."postId" = $2 ;
     `, [parseInt(userId), parseInt(postId)])
 
