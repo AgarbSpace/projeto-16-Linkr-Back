@@ -1,5 +1,6 @@
 import urlMetadata from "url-metadata";
 import { timelineRepository } from "../repositories/timelineRepository.js";
+import { verifyFollowByIdsQuery, verifyIfUserFollowsAnyone } from "../repositories/followReposirtory.js";
 
 export async function getTimeline(request, response) {
 
@@ -36,8 +37,13 @@ export async function getTimeline(request, response) {
         })
       }
     }
+    const finalPosts = [];
+    for (let i = 0; i < post.length; i++) {
+      const verifyFollow = await verifyFollowByIdsQuery(response.locals.user.id, post[i].userId);
+      if (verifyFollow.length !== 0 || (response.locals.user.id === post[i].userId)) finalPosts.push(post[i]);
+    }
 
-    response.send(post);
+    response.send(finalPosts);
   } catch (error) {
     console.log(error)
     response.sendStatus(500);
@@ -85,6 +91,16 @@ export async function getTimelineByUserId(req, res) {
     const result = { username: posts.username, posts: post.reverse().slice(0, 20) }
 
     res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
+
+export async function userFollowsAnyone (req, res) {
+  try {
+    const listFollows = await verifyIfUserFollowsAnyone(res.locals.user.id);
+    res.send(listFollows);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);

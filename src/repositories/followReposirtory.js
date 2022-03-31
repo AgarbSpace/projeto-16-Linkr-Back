@@ -45,3 +45,27 @@ export async function getAllFollowsQuery(userId) {
     console.log(error);
   }
 }
+
+
+export async function verifyFollowByIdsQuery(followerId, userId) {
+  try {
+    const verification = await connection.query(`
+      SELECT * FROM followers
+      WHERE "followerId" = $1 AND "userId" = $2
+    `, [followerId, userId]);
+    return verification.rows
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function verifyIfUserFollowsAnyone(followerId) {
+  try {
+    const verification = await connection.query(`
+      SELECT * FROM followers WHERE "followerId" = $1
+    `, [followerId]);
+    return verification.rows;
+  } catch (err) {
+    console.log(err);
+  }
+}
