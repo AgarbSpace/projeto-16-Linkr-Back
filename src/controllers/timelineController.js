@@ -53,7 +53,7 @@ export async function getTimeline(request, response) {
       const verifyFollowRepost = await verifyFollowByIdsQuery(post[i].reposterId, userId);
       if (((userId === post[i].userId))  || 
           (verifyFollow.length !== 0 && verifyFollow.userId === userId) ||
-          (verifyFollowRepost.length !== 0 && verifyFollowRepost.userId) === userId) {
+          (verifyFollowRepost.length !== 0 && verifyFollowRepost.userId === userId)) {
         finalPosts.push(post[i])};
     }
 
