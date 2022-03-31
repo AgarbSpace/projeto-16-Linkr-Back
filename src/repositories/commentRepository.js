@@ -12,6 +12,16 @@ async function getComments(userId, postId) {
   return comments.rows
 }
 
+async function insertComment (postId, userId, comment) {
+  try {
+    await connection.query(`
+      INSERT INTO comments ("postId", "userId", comment) VALUES ($1, $2, $3)
+    `, [postId, userId, comment]);
+  } catch (err) {
+    console.log(err);
+  }
+}
 export const commentRepository = {
   getComments,
+  insertComment,
 }
