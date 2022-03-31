@@ -59,11 +59,11 @@ export async function verifyFollowByIdsQuery(followerId, userId) {
   }
 }
 
-export async function verifyIfUserFollowsAnyone(followerId) {
+export async function verifyIfUserFollowsAnyone(userId) {
   try {
     const verification = await connection.query(`
-      SELECT * FROM followers WHERE "followerId" = $1
-    `, [followerId]);
+      SELECT * FROM followers WHERE "userId" = $1
+    `, [userId]);
     return verification.rows;
   } catch (err) {
     console.log(err);

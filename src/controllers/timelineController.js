@@ -39,7 +39,7 @@ export async function getTimeline(request, response) {
     }
     const finalPosts = [];
     for (let i = 0; i < post.length; i++) {
-      const verifyFollow = await verifyFollowByIdsQuery(response.locals.user.id, post[i].userId);
+      const verifyFollow = await verifyFollowByIdsQuery(post[i].userId, response.locals.user.id);
       if (verifyFollow.length !== 0 || (response.locals.user.id === post[i].userId)) finalPosts.push(post[i]);
     }
 
