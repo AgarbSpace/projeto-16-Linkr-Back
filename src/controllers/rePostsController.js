@@ -1,4 +1,4 @@
-import { getRepostCountQuery, rePostQuery } from "../repositories/rePostsRepository.js"
+import { deleteRepostQuery, getRepostCountQuery, rePostQuery } from "../repositories/rePostsRepository.js"
 
 export async function getCountReposts(req, res) {
   const { postId } = req.params
@@ -17,6 +17,18 @@ export async function repost(req, res) {
   try {
     await rePostQuery(userId, postId)
     res.sendStatus(201)
+  } catch (error) {
+    console.log("controllerError:", error)
+    res.sendStatus(500)
+  }
+}
+export async function deleteRepost(req, res) {
+  const { postId } = req.params
+  const { user } = res.locals
+  const userId = parseInt(user.id)
+  try {
+    await deleteRepostQuery(userId, postId)
+    res.sendStatus(200)
   } catch (error) {
     console.log("controllerError:", error)
     res.sendStatus(500)

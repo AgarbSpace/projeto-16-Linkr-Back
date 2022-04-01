@@ -16,3 +16,9 @@ export async function rePostQuery(userId, postId) {
     VALUES ($1, $2)
   `,[userId, postId])
 }
+export async function deleteRepostQuery(userId, postId) {
+  await connection.query(`
+    DELETE FROM reposts
+    WHERE "userId"=$1 AND "postId"=$2
+  `,[userId, postId])
+}
