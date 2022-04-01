@@ -1,11 +1,11 @@
 import { timelineRepository } from "../repositories/timelineRepository.js";
-import { getTimeline } from "./timelineController.js";
+import { improvedGetTimeline } from "./timelineController.js";
 
 export async function getTimelineNotification(req, res) {
 
   try {
 
-    await getTimeline(req, res);
+    await improvedGetTimeline(req, res);
 
   } catch (error) {
     console.log(error)
