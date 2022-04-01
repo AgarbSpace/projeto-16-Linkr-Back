@@ -13,3 +13,17 @@ export async function searchUsers(req, res) {
     res.send(500)
   }
 }
+
+export async function getUserById(req, res) {
+  try {
+    const id = req.params.id;
+
+    const user = await userRepository.getUserInfo(id)
+
+    res.send(user)
+
+  } catch (error) {
+    console.log(error)
+    res.send(500)
+  }
+}
