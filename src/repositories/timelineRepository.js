@@ -1,14 +1,14 @@
 import connection from "../database.js";
 
-async function getPosts(offset){
-  
-    let offsetQuery = "";
+async function getPosts(offset) {
 
-    if(offset && typeof(parseInt(offset)) === 'number'){
-      offsetQuery = `OFFSET ${offset}`
-    }
+  let offsetQuery = "";
 
-    const result =  await connection.query(`
+  if (offset && typeof (parseInt(offset)) === 'number') {
+    offsetQuery = `OFFSET ${offset}`
+  }
+
+  const result = await connection.query(`
       SELECT 
         posts.*, 
         posts.id AS "id", 
@@ -23,11 +23,11 @@ async function getPosts(offset){
       LIMIT 10 ${offsetQuery}
       `);
 
-    return result.rows
+  return result.rows
 }
 
-async function getPostsByUserId (userId) {
-  const posts =  await connection.query(`
+async function getPostsByUserId(userId) {
+  const posts = await connection.query(`
     SELECT posts.*, posts.id AS "id", users.id AS "userId", users.name AS "userName",
     users.picture AS picture
     FROM posts
@@ -35,11 +35,11 @@ async function getPostsByUserId (userId) {
     WHERE "userId" = $1
    `, [userId]);
 
-   const userInfo = await connection.query(`
+  const userInfo = await connection.query(`
      SELECT * FROM users WHERE id = $1
    `, [userId]);
 
-   return {username: userInfo.rows[0].name, userPosts: posts.rows};
+  return { username: userInfo.rows[0].name, userPosts: posts.rows };
 }
 async function getRePosts() {
   const reposts = await connection.query(`
@@ -64,8 +64,40 @@ async function getRePosts() {
   `)
   return reposts.rows
 }
+
+async function improvedGetPosts(offset, userId) {
+
+  let offsetQuery = "";
+
+  if (offset && typeof (parseInt(offset)) === 'number') {
+    offsetQuery = `OFFSET ${offset}`
+  }
+
+  const array = await connection.query(`
+  SELECT posts.*, u.name as "reposterName", u.name as "userName", u.picture as picture, u.id as "reposterId" FROM posts
+  JOIN users u ON u.id=posts."userId" 
+  LEFT JOIN followers f ON f."userId"=$1
+  WHERE posts."userId" = f."followerId" OR posts."userId"=$1
+  UNION
+  SELECT p.id, p.text , p.link, r.date, owners.id as "userId",  u.name as "reposterName",
+  owners.name as "userName", owners.picture as picture, r."userId" as "reposterId"
+  FROM reposts r
+  JOIN posts p ON r."postId" = p.id
+  JOIN users u ON r."userId" = u.id
+  JOIN followers f ON f."followerId" = u.id
+  JOIN users owners 
+  ON owners.id = p."userId"
+  WHERE f."userId" = $1
+  ORDER BY date DESC
+  LIMIT 10 ${offsetQuery}
+  `, [parseInt(userId)])
+
+  return array.rows
+}
+
 export const timelineRepository = {
-    getPosts,
-    getPostsByUserId,
-    getRePosts
+  getPosts,
+  getPostsByUserId,
+  getRePosts,
+  improvedGetPosts
 }

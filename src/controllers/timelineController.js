@@ -10,51 +10,57 @@ export async function getTimeline(request, response) {
 
     const reposts = await timelineRepository.getRePosts();
     const timeline = posts.concat(reposts)
-    const timelineInOrder = timeline.sort((a,b)=> b.date - a.date)
-    
+    const timelineInOrder = timeline.sort((a, b) => b.date - a.date)
+
     const post = []
-    for (const [idx, postsArray] of timelineInOrder.entries()) {
-      try {
-        const link = await urlMetadata(postsArray.link);
-        post.push({
-          id: postsArray.id,
-          userId: postsArray.userId,
-          reposterId: postsArray.reposterId,
-          reposterName: postsArray.reposterName,
-          date: postsArray.date,
-          image: link.image,
-          description: link.description,
-          title: link.title,
-          source: postsArray.link,
-          text: postsArray.text,
-          picture: postsArray.picture,
-          username: postsArray.userName
-        })
-      } catch (error) {
-        post.push({
-          id: postsArray.id,
-          userId: postsArray.userId,
-          reposterId: postsArray.reposterId,
-          reposterName: postsArray.reposterName,
-          date: postsArray.date,
-          image: "https://geekblog.com.br/wp-content/uploads/2021/03/o-que-e-erro-404.png",
-          description: "Erro ao tentar carregar meta-dados",
-          title: "Erro ao tentar carregar meta-dados",
-          source: postsArray.link,
-          text: postsArray.text,
-          picture: postsArray.picture,
-          username: postsArray.userName
-        })
+    if (request.headers.skipMetaData) {
+      post = [...timelineInOrder]
+    }
+    else {
+      for (const [idx, postsArray] of timelineInOrder.entries()) {
+        try {
+          const link = await urlMetadata(postsArray.link);
+          post.push({
+            id: postsArray.id,
+            userId: postsArray.userId,
+            reposterId: postsArray.reposterId,
+            reposterName: postsArray.reposterName,
+            date: postsArray.date,
+            image: link.image,
+            description: link.description,
+            title: link.title,
+            source: postsArray.link,
+            text: postsArray.text,
+            picture: postsArray.picture,
+            username: postsArray.userName
+          })
+        } catch (error) {
+          post.push({
+            id: postsArray.id,
+            userId: postsArray.userId,
+            reposterId: postsArray.reposterId,
+            reposterName: postsArray.reposterName,
+            date: postsArray.date,
+            image: "https://geekblog.com.br/wp-content/uploads/2021/03/o-que-e-erro-404.png",
+            description: "Erro ao tentar carregar meta-dados",
+            title: "Erro ao tentar carregar meta-dados",
+            source: postsArray.link,
+            text: postsArray.text,
+            picture: postsArray.picture,
+            username: postsArray.userName
+          })
+        }
       }
     }
     const finalPosts = [];
     for (let i = 0; i < post.length; i++) {
       const verifyFollow = await verifyFollowByIdsQuery(post[i].userId, userId);
       const verifyFollowRepost = await verifyFollowByIdsQuery(post[i].reposterId, userId);
-      if (((userId === post[i].userId))  || 
-          (verifyFollow.length !== 0 && verifyFollow.userId === userId) ||
-          (verifyFollowRepost.length !== 0 && verifyFollowRepost.userId === userId)) {
-        finalPosts.push(post[i])};
+      if (((userId === post[i].userId)) ||
+        (verifyFollow.length !== 0 && verifyFollow.userId === userId) ||
+        (verifyFollowRepost.length !== 0 && verifyFollowRepost.userId === userId)) {
+        finalPosts.push(post[i])
+      };
     }
 
     response.send(finalPosts);
@@ -111,10 +117,65 @@ export async function getTimelineByUserId(req, res) {
   }
 }
 
-export async function userFollowsAnyone (req, res) {
+export async function userFollowsAnyone(req, res) {
   try {
     const listFollows = await verifyIfUserFollowsAnyone(res.locals.user.id);
     res.send(listFollows);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
+
+export async function improvedGetTimeline(req, res) {
+
+  const userId = res.locals.user.id
+  try {
+    const offset = req.query.offset;
+    const posts = await timelineRepository.improvedGetPosts(offset, userId);
+
+    const list = []
+    if (req.headers.skipMetaData) {
+      list = [...posts]
+    }
+    else {
+      for (const [idx, postsArray] of posts.entries()) {
+        try {
+          const link = await urlMetadata(postsArray.link);
+          list.push({
+            id: postsArray.id,
+            userId: postsArray.userId,
+            reposterId: postsArray.reposterId,
+            reposterName: postsArray.reposterName,
+            date: postsArray.date,
+            image: link.image,
+            description: link.description,
+            title: link.title,
+            source: postsArray.link,
+            text: postsArray.text,
+            picture: postsArray.picture,
+            username: postsArray.userName
+          })
+        } catch (error) {
+          list.push({
+            id: postsArray.id,
+            userId: postsArray.userId,
+            reposterId: postsArray.reposterId,
+            reposterName: postsArray.reposterName,
+            date: postsArray.date,
+            image: "https://geekblog.com.br/wp-content/uploads/2021/03/o-que-e-erro-404.png",
+            description: "Erro ao tentar carregar meta-dados",
+            title: "Erro ao tentar carregar meta-dados",
+            source: postsArray.link,
+            text: postsArray.text,
+            picture: postsArray.picture,
+            username: postsArray.userName
+          })
+        }
+      }
+    }
+
+    return res.send(list)
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
