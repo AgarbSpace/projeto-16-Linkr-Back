@@ -132,6 +132,7 @@ export async function improvedGetTimeline(req, res) {
   const userId = res.locals.user.id
   try {
     const offset = req.query.offset;
+
     const posts = await timelineRepository.improvedGetPosts(offset, userId);
 
     const list = []

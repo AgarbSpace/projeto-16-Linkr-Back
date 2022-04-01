@@ -70,7 +70,7 @@ async function improvedGetPosts(offset, userId) {
   let offsetQuery = "";
 
   if (offset && typeof (parseInt(offset)) === 'number') {
-    offsetQuery = `OFFSET ${offset}`
+    offsetQuery = `OFFSET ${parseInt(offset)}`
   }
 
   const array = await connection.query(`
@@ -89,7 +89,8 @@ async function improvedGetPosts(offset, userId) {
   ON owners.id = p."userId"
   WHERE f."userId" = $1
   ORDER BY date DESC
-  LIMIT 10 ${offsetQuery}
+  LIMIT 10 
+  ${offsetQuery}
   `, [parseInt(userId)])
 
   return array.rows
